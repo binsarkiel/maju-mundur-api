@@ -1,66 +1,181 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Maju Mundur API - Quickstart Testing Guide (Postman)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This guide provides a simplified walkthrough for testing the Maju Mundur API using Postman.
 
-## About Laravel
+## 1. Setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1.  **Install Postman:** Download and install Postman: [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
+2.  **Start API Server:** Make sure your Laravel API is running (usually `php artisan serve`).
+3.  **Database:** Ensure your database is set up, migrated, and seeded (`php artisan migrate:fresh --seed`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 2. Postman Environment
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Create a Postman environment (e.g., "Maju Mundur Dev") with these variables:
 
-## Learning Laravel
+*   `base_url`: `http://localhost:8000/api` (or your API's base URL).
+*   `merchant_token`: (Leave blank - you'll get this after registering/logging in).
+*   `customer_token`: (Leave blank - you'll get this after registering/logging in).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Select this environment in Postman.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 3. Key API Endpoints and Tests
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+This section outlines the main API calls and how to test them. Remember to set the `Content-Type: application/json` header for requests with a JSON body.
 
-## Laravel Sponsors
+### 3.1 Authentication
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+*   **Register Merchant:**
+    *   `POST {{base_url}}/register`
+    *   Body:
+        ```json
+        {
+            "name": "Merchant Test",
+            "email": "merchant@example.com",
+            "password": "password",
+            "is_merchant": true
+        }
+        ```
+    *   **Copy the `token` from the response and save it to `merchant_token`.**
 
-### Premium Partners
+*   **Register Customer:**
+    *   `POST {{base_url}}/register`
+    *   Body:
+        ```json
+        {
+            "name": "Customer Test",
+            "email": "customer@example.com",
+            "password": "password",
+            "is_merchant": false
+        }
+        ```
+    *   **Copy the `token` from the response and save it to `customer_token`.**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+*   **Login Merchant:**
+    *   `POST {{base_url}}/login`
+    *    **Headers:** `Content-Type: application/json`
+    *   Body:
+        ```json
+        {
+            "email": "merchant@example.com",  // Use registered email
+            "password": "password",
+            "is_merchant": true
+        }
+        ```
+     *   **Copy the `token` from the response and save it to `merchant_token`.**
 
-## Contributing
+*   **Login Customer:**
+    *   `POST {{base_url}}/login`
+    *   **Headers:** `Content-Type: application/json`
+    *   Body:
+        ```json
+        {
+            "email": "customer@example.com",  // Use registered email
+            "password": "password",
+            "is_merchant": false
+        }
+        ```
+    *   **Copy the `token` from the response and save it to `customer_token`.**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* **Get Current User**
+  * `GET {{base_url}}/user`
+  * Headers: `Authorization: Bearer {{merchant_token}}` or `Authorization: Bearer {{customer_token}}`
+  * Get current user data
 
-## Code of Conduct
+*   **Logout:**
+    *   `POST {{base_url}}/logout`
+    *   Headers: `Authorization: Bearer {{merchant_token}}` (or `{{customer_token}}`)
+    *   After logging out, try accessing a protected route with the *same* token. You should get a `401 Unauthorized` error.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3.2 Merchant: Product Management
 
-## Security Vulnerabilities
+**Headers:** `Authorization: Bearer {{merchant_token}}` for *all* merchant product requests.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+*   **Create Product:**
+    *   `POST {{base_url}}/merchant/products`
+      *   **Headers:** `Content-Type: application/json`
+    *   Body:
+        ```json
+        {
+            "name": "My Product",
+            "description": "Product description",
+            "price": 29.99,
+            "stock": 50
+        }
+        ```
 
-## License
+*   **List Products:**
+    *   `GET {{base_url}}/merchant/products`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+*   **Show Product:**
+    *   `GET {{base_url}}/merchant/products/{id}` (Replace `{id}` with the product ID)
+
+*   **Update Product:**
+    *   `PUT {{base_url}}/merchant/products/{id}`
+      *   **Headers:** `Content-Type: application/json`
+    *   Body: (Send the fields you want to update)
+        ```json
+        {
+            "name": "Updated Name",
+            "price": 39.99
+        }
+        ```
+
+*   **Delete Product:**
+    *   `DELETE {{base_url}}/merchant/products/{id}`
+
+### 3.3 Customer: Viewing Products
+
+*   **List All Products:**
+    *   `GET {{base_url}}/products`  (No authentication needed)
+
+### 3.4 Customer: Orders
+
+**Headers:** `Authorization: Bearer {{customer_token}}` for *all* customer order requests.
+**Headers:** `Content-Type: application/json` for create order requests.
+
+*   **Create Order:**
+    *   `POST {{base_url}}/customer/orders`
+    *   Body:
+        ```json
+        {
+            "products": [
+                { "product_id": 1, "quantity": 1 },
+                { "product_id": 2, "quantity": 2 }
+            ]
+        }
+        ```
+        (Use valid product IDs)
+
+* **Get Order List:**
+    * `GET {{base_url}}/customer/orders`
+
+### 3.5  Merchant: Viewing Orders
+*   **List Orders:**
+    *   `GET {{base_url}}/merchant/orders`
+        *   **Headers:** `Authorization: Bearer {{merchant_token}}`
+    *   Get list orders which contains merchant's product
+*  **Show Orders:**
+    *   `GET {{base_url}}/merchant/orders/1` (replace 1 with valid order id)
+    *    **Headers:** `Authorization: Bearer {{merchant_token}}`
+    * Get order detail which contains merchant's product
+
+### 3.6 Customer: Rewards
+
+**Headers:** `Authorization: Bearer {{customer_token}}` for *all* customer reward requests.
+
+*   **List Rewards:**
+    *   `GET {{base_url}}/customer/rewards`
+
+*   **Redeem Reward:**
+    *   `POST {{base_url}}/customer/rewards/{id}/redeem` (Replace `{id}` with the reward ID)
+
+## 4. Common Errors
+
+*   **400 Bad Request:** Client-side error (e.g., not enough points to redeem).
+*   **401 Unauthorized:** Missing or invalid token.
+*   **403 Forbidden:**  User is authenticated, but not authorized (e.g., customer accessing merchant routes).
+*   **404 Not Found:** Resource not found.
+*   **422 Unprocessable Entity:** Validation errors (check the response body for details).
+*   **500 Internal Server Error:** Server-side error.
+
+This simplified guide provides a clear and concise way to start testing your Maju Mundur API. Remember to replace placeholders like `{{base_url}}`, `{{merchant_token}}`, `{{customer_token}}`, and `{id}` with actual values.  This is suitable for a quick start section in your README, and you can always expand it with more details as needed.
