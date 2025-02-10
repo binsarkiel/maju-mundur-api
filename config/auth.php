@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Merchant;
+
 return [
 
     /*
@@ -40,6 +42,15 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [  // Keep your existing 'api' guard
+            'driver' => 'sanctum', // Important: Use Sanctum for API tokens
+            'provider' => 'users',  //  Or 'merchants', depending on your needs
+            'hash' => false,
+        ],
+        'merchant' => [ // Add this new guard
+            'driver' => 'session',  //  Use 'session' for web-based merchant login
+            'provider' => 'merchants', //  This MUST match a provider below
+        ],
     ],
 
     /*
@@ -64,6 +75,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
+        'merchants' => [
+            'driver' => 'eloquent',
+            'model' => Merchant::class
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
@@ -94,6 +110,12 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'merchants' => [ // Add this section for merchant password resets
+            'provider' => 'merchants',
+            'table' => 'password_reset_tokens', // You can use the same table
             'expire' => 60,
             'throttle' => 60,
         ],
