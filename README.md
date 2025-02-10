@@ -178,4 +178,4 @@ This section outlines the main API calls and how to test them. Remember to set t
 *   **422 Unprocessable Entity:** Validation errors (check the response body for details).
 *   **500 Internal Server Error:** Server-side error.
 
-This simplified guide provides a clear and concise way to start testing your Maju Mundur API. Remember to replace placeholders like `{{base_url}}`, `{{merchant_token}}`, `{{customer_token}}`, and `{id}` with actual values.  This is suitable for a quick start section in your README, and you can always expand it with more details as needed.
+This simplified guide provides a clear and concise way to start testing your Maju Mundur API. Remember to replace placeholders like `{{base_url}}`, `{{merchant_token}}`, `{{customer_token}}`, and `{id}` with actual values.
